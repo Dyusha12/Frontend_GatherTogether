@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/authorizationFragment">
+    <fragment
+        android:id="@+id/authorizationFragment"
+        android:name="com.example.frontend_gathertogether.fragment.AuthorizationFragment"
+        android:label="Authorization">
+        <action
+            android:id="@+id/action_to_registration"
+            app:destination="@id/registrationFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.example.frontend_gathertogether.fragment.RegistrationFragment"
+        android:label="Registration">
+        <action
+            android:id="@+id/action_to_authorization"
+            app:destination="@id/authorizationFragment"/>
+    </fragment>
+</navigation>

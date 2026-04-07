@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">Frontend_GatherTogether</string>
+    <string name="welcome_message">Добро пожаловать!</string>
+    <string name="entrance_message">Войдите в свой аккаунт</string>
+    <string name="email_message">Электронная почта</string>
+    <string name="password_message">Пароль</string>
+    <string name="enter">Войти</string>
+    <string name="account_absence_message">Нет аккаунта?</string>
+    <string name="registration_offer">Создать аккаунт</string>
+    <string name="navigation_drawer_open">Открыть меню</string>
+    <string name="navigation_drawer_close">Закрыть меню</string>
+    <string name="home_header">Главная</string>
+    <string name="profile_header">Профиль</string>
+    <string name="settings_header">Настройки</string>
+    <string name="register_header">Регистрация</string>
+    <string name="register_message">Создайте аккаунт</string>
+    <string name="number_phone">Номер телефона (Не обязательно)</string>
+    <string name="last_name">Фамилия</string>
+    <string name="first_name">Имя</string>
+    <string name="date_birth">Дата рождения</string>
+    <string name="date_selection">Выберите дату</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="account_existence_message">Есть аккаунт?</string>
+    <string name="authorization_offer">Войти в аккаунт</string>
+
 </resources>

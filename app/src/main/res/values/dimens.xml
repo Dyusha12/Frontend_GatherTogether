@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="section_headings">28sp</dimen>
+    <dimen name="under_heading_text">18sp</dimen>
+    <dimen name="field_name">16sp</dimen>
+    <dimen name="information_text">16sp</dimen>
+</resources>

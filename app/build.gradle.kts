@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -45,4 +46,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("com.google.android.material:material:1.10.0")
+    implementation("io.ktor:ktor-client-android:2.0.0")
+    implementation("io.ktor:ktor-client-json:2.0.0")
+    implementation("io.ktor:ktor-client-serialization-jvm:2.0.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
 }

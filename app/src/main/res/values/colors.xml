@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="launch_bg">#FE8E58</color>
+    <color name="primaryLight">#6200EE</color>
+    <color name="element_bg">#E5E5E5</color>
+    <color name="gray">#797979</color>
+    <color name="button_bg">#0E30A0</color>
+    <color name="text_fg">#49454F</color>
+    <color name="red_gradient">#FF6B6B</color>
+    <color name="orange_gradient">#FF9F1C</color>
+    <color name="red">#FF2400</color>
+    <color name="soft_orange">#FAAE6B</color>
 </resources>
