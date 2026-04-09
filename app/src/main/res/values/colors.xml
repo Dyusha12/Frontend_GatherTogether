@@ -11,5 +11,15 @@
     <color name="red_gradient">#FF6B6B</color>
     <color name="orange_gradient">#FF9F1C</color>
     <color name="red">#FF2400</color>
-    <color name="soft_orange">#FAAE6B</color>
+    <color name="soft_orange">#c67f35</color>
+    <color name="persian_red">#d53125</color>
+    <color name="chip_background">#F1F1F1</color>
+    <color name="chip_selected">#BE5505</color>
+    <color name="chip_text_selected">#FFFFFF</color>
+    <color name="chip_add_background">#FFF3E0</color>
+    <color name="light_yellow_gradient">#FFCC5C</color>
+    <color name="orange_menu_gradient">#FF9F1C</color>
+    <color name="dark_orange_menu_gradient">#BE5505</color>
+    <color name="dark_gray">#20000000</color>
+    <color name="white_smoke">#F8F8F8</color>
 </resources>

@@ -3,25 +3,26 @@ package com.example.frontend_gathertogether.fragment
 import androidx.fragment.app.Fragment
 import com.example.frontend_gathertogether.R
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.frontend_gathertogether.provider.ClientProvider
+import com.example.frontend_gathertogether.services.ClientProvider
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 class AuthorizationFragment : Fragment(R.layout.activity_authorization) {
 
@@ -32,6 +33,7 @@ class AuthorizationFragment : Fragment(R.layout.activity_authorization) {
     private lateinit var registerLink: TextView
     private lateinit var mailContainer: LinearLayout
     private lateinit var passwordContainer: LinearLayout
+    private lateinit var iconPassword: ImageView
 
     // Константы
     companion object {
@@ -49,6 +51,7 @@ class AuthorizationFragment : Fragment(R.layout.activity_authorization) {
         registerLink = view.findViewById(R.id.registerLink)
         mailContainer = view.findViewById(R.id.mailContainer)
         passwordContainer = view.findViewById(R.id.passwordContainer)
+        iconPassword = view.findViewById(R.id.passwordToggle)
 
         // Очистка ошибок при вводе текста
         mailEditText.addTextChangedListener {
@@ -67,6 +70,21 @@ class AuthorizationFragment : Fragment(R.layout.activity_authorization) {
         // Переход на экран регистрации
         registerLink.setOnClickListener {
             findNavController().navigate(R.id.action_to_registration)
+        }
+
+        var passwordVisible = false
+
+        // Обработка нажатия на показ/скрытие пароля
+        iconPassword.setOnClickListener {
+            passwordVisible = !passwordVisible
+            if (passwordVisible) {
+                passwordEditText.transformationMethod = null // Показывает пароль
+                iconPassword.setImageResource(R.mipmap.ic_password_open)
+            } else {
+                passwordEditText.transformationMethod = android.text.method.PasswordTransformationMethod.getInstance() // Скрывает пароль
+                iconPassword.setImageResource(R.mipmap.ic_password_close)
+            }
+            passwordEditText.setSelection(passwordEditText.text?.length ?: 0)
         }
     }
 
@@ -110,7 +128,8 @@ class AuthorizationFragment : Fragment(R.layout.activity_authorization) {
     // Отправка запроса на сервер для авторизации
     private suspend fun loginUser(email: String, password: String): String? {
         return try {
-            val client = ClientProvider().instance()
+            val clientProvider = ClientProvider(requireContext())
+            val client = clientProvider.instance()
 
             // POST-запрос с параметрами почты и пароля
             val response: HttpResponse = client.post(LOGIN_URL) {
@@ -122,14 +141,26 @@ class AuthorizationFragment : Fragment(R.layout.activity_authorization) {
 
             // Обработка успешного ответа
             if (response.status == HttpStatusCode.OK) {
+
                 val token: String = response.body()
-                Log.d(TAG, "Получен токен: $token")
-                token
-            } else {
+
+                val payload = decodeJwt(token)
+                val userId = payload?.getString("sub")
+
+                Log.d(TAG, payload.toString())
+                if (userId != null) {
+                    clientProvider.saveToken(token)
+                    saveUserId(userId)
+                    Log.d(TAG, "User ID: $userId")
+                }
+                findNavController().navigate(R.id.action_to_profile)
+                return token
+            }
+            else {
                 // Ошибка авторизации
                 Log.e(TAG, "Ошибка авторизации: ${response.status}")
                 setError(mailContainer, "Неверный логин или пароль", mailEditText)
-                null
+                return null
             }
         } catch (e: Exception) {
             // Ошибка запроса
@@ -147,5 +178,31 @@ class AuthorizationFragment : Fragment(R.layout.activity_authorization) {
     // Очистка состояния ошибки
     private fun clearError(container: LinearLayout) {
         container.setBackgroundResource(R.drawable.bg_input_fields)
+    }
+
+    // Сохранение идентификатора пользователя в настройки
+    private fun saveUserId(userId: String) {
+        val prefs = requireContext().getSharedPreferences("app_prefs", 0)
+        prefs.edit().putString("USER_ID", userId).apply()
+        prefs.edit().putBoolean("ACCOUNT_ACTIVE", true).apply()
+    }
+
+    // Расшифровка JWT-токена
+    fun decodeJwt(token: String): JSONObject? {
+        return try {
+            val parts = token.split(".")
+            if (parts.size != 3) return null
+
+            val payload = parts[1]
+
+            val decodedBytes = Base64.decode(payload, Base64.URL_SAFE)
+            val decodedString = String(decodedBytes)
+
+            JSONObject(decodedString)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }

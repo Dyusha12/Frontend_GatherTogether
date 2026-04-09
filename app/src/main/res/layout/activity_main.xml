@@ -13,13 +13,13 @@
 
         <ImageView
             android:id="@+id/menuButton"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@mipmap/ic_menu"
             android:padding="4dp"
             android:layout_marginTop="35dp"
             android:layout_marginStart="16dp"
-            app:tint="@color/white"
+            app:tint="@color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 

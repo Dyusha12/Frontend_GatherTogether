@@ -9,6 +9,9 @@
         <action
             android:id="@+id/action_to_registration"
             app:destination="@id/registrationFragment"/>
+        <action
+            android:id="@+id/action_to_profile"
+            app:destination="@id/profileFragment"/>
     </fragment>
 
     <fragment
@@ -18,5 +21,11 @@
         <action
             android:id="@+id/action_to_authorization"
             app:destination="@id/authorizationFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.frontend_gathertogether.fragment.ProfileFragment"
+        android:label="Profile">
     </fragment>
 </navigation>

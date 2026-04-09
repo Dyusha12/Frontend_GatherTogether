@@ -10,8 +10,8 @@ import android.widget.*
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.frontend_gathertogether.provider.ClientProvider
-import com.example.frontend_gathertogether.models.UserResponse
+import com.example.frontend_gathertogether.services.ClientProvider
+import com.example.frontend_gathertogether.response.UserResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.statement.HttpResponse
@@ -39,6 +39,9 @@ class RegistrationFragment : Fragment(R.layout.activity_registration) {
     private lateinit var passwordContainer: LinearLayout
     private lateinit var birthDateContainer: LinearLayout
     private lateinit var authorizationLink: TextView
+    private lateinit var iconPassword: ImageView
+    private lateinit var passwordReplayContainer: LinearLayout
+    private lateinit var passwordReplayEditText: EditText
 
     // Константы
     companion object {
@@ -64,6 +67,9 @@ class RegistrationFragment : Fragment(R.layout.activity_registration) {
         passwordContainer = view.findViewById(R.id.passwordContainer)
         birthDateContainer = view.findViewById(R.id.birthDateContainer)
         authorizationLink = view.findViewById(R.id.authorizationLink)
+        iconPassword = view.findViewById(R.id.passwordToggle)
+        passwordReplayContainer = view.findViewById(R.id.passwordReplayContainer)
+        passwordReplayEditText = view.findViewById(R.id.passwordReplayEditText)
 
         // Настройка обработчиков событий
         birthDateText.setOnClickListener { showDatePicker() }
@@ -87,6 +93,25 @@ class RegistrationFragment : Fragment(R.layout.activity_registration) {
         }
         passwordEditText.addTextChangedListener {
             clearError(passwordContainer)
+        }
+
+        passwordReplayEditText.addTextChangedListener {
+            clearError(passwordReplayContainer)
+        }
+
+        var passwordVisible = false
+
+        // Обработка нажатия на показ/скрытие пароля
+        iconPassword.setOnClickListener {
+            passwordVisible = !passwordVisible
+            if (passwordVisible) {
+                passwordEditText.transformationMethod = null // Показывает пароль
+                iconPassword.setImageResource(R.mipmap.ic_password_open)
+            } else {
+                passwordEditText.transformationMethod = android.text.method.PasswordTransformationMethod.getInstance() // Скрывает пароль
+                iconPassword.setImageResource(R.mipmap.ic_password_close)
+            }
+            passwordEditText.setSelection(passwordEditText.text?.length ?: 0)
         }
 
         // Настройка маски для телефона
@@ -118,6 +143,7 @@ class RegistrationFragment : Fragment(R.layout.activity_registration) {
         val firstName = firstNameEditText.text.toString()
         val lastName = lastNameEditText.text.toString()
         val password = passwordEditText.text.toString()
+        val passwordReplay = passwordReplayEditText.text.toString()
         val birthDate = birthDateText.text.toString()
         var isValid = true
         val phone = phoneFormat.replace(" ", "")
@@ -173,6 +199,19 @@ class RegistrationFragment : Fragment(R.layout.activity_registration) {
             clearError(passwordContainer)
         }
 
+        // Проверка повторного пароля
+        if (passwordReplay.isBlank()) {
+            setError(passwordReplayContainer, "Заполните поле", passwordReplayEditText)
+            isValid = false
+        }
+        else if (passwordReplay != password) {
+            setError(passwordReplayContainer, "Пароли не совпадают", passwordReplayEditText)
+            isValid = false
+        }
+        else{
+            clearError(passwordReplayContainer)
+        }
+
         // Проверка даты рождения
         if (!isValidBirthDate(birthDate)) {
             Toast.makeText(requireContext(), "Возраст должен быть не меньше 14 лет", Toast.LENGTH_LONG).show()
@@ -226,7 +265,8 @@ class RegistrationFragment : Fragment(R.layout.activity_registration) {
     // Отправка запроса на регистрацию на сервер
     private suspend fun registerUser(email: String, phone: String?, password: String, surname: String, name: String, birthDate: String) {
         try {
-            val client = ClientProvider().instance()
+            val clientProvider = ClientProvider(requireContext())
+            val client = clientProvider.instance()
 
             // Запрос с параметрами
             val response: HttpResponse = client.submitForm(

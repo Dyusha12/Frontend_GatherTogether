@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">Frontend_GatherTogether</string>
+    <string name="app_name">Сходины</string>
     <string name="welcome_message">Добро пожаловать!</string>
     <string name="entrance_message">Войдите в свой аккаунт</string>
     <string name="email_message">Электронная почта</string>
     <string name="password_message">Пароль</string>
+    <string name="password_replay_message">Повторите пароль</string>
     <string name="enter">Войти</string>
     <string name="account_absence_message">Нет аккаунта?</string>
     <string name="registration_offer">Создать аккаунт</string>
@@ -15,6 +16,7 @@
     <string name="register_header">Регистрация</string>
     <string name="register_message">Создайте аккаунт</string>
     <string name="number_phone">Номер телефона (Не обязательно)</string>
+    <string name="number_phone_profile">Номер телефона</string>
     <string name="last_name">Фамилия</string>
     <string name="first_name">Имя</string>
     <string name="date_birth">Дата рождения</string>
@@ -22,5 +24,15 @@
     <string name="register">Зарегистрироваться</string>
     <string name="account_existence_message">Есть аккаунт?</string>
     <string name="authorization_offer">Войти в аккаунт</string>
+    <string name="my_date_message">Мои данные</string>
+    <string name="save_changes">Сохранить изменения</string>
+    <string name="my_interests_message">Мои интересы</string>
+    <string name="add">Добавить</string>
+    <string name="soon_message">Скоро</string>
+    <string name="my_events_message">Мои мероприятия</string>
+    <string name="visited_events_message">Посещенные мероприятия</string>
+    <string name="choose_interest_message">Выберите интересы</string>
+    <string name="choose_interest_warning">Можно выбрать до 5 интересов</string>
+    <string name="add_selected_interests">Добавить выбранные</string>
 
 </resources>

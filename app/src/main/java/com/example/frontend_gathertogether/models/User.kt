@@ -3,10 +3,10 @@ package com.example.frontend_gathertogether.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserResponse(
+data class User(
     val userCode: String,
     val mail: String,
-    val phoneNumber: String?,
+    val phoneNumber: String? = null,
     val password: String,
     val surname: String,
     val name: String,
