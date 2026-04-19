@@ -34,5 +34,20 @@
     <string name="choose_interest_message">Выберите интересы</string>
     <string name="choose_interest_warning">Можно выбрать до 5 интересов</string>
     <string name="add_selected_interests">Добавить выбранные</string>
-
+    <string name="age_message">Возраст: </string>
+    <string name="search_name_or_address_message">Поиск по названию или адресу</string>
+    <string name="age_warning_message">* На месте может быть осуществлена проверка документа удостоверяющего личность</string>
+    <string name="cancel_event_warning_message">* Отменить участие можно не позднее чем за 3 дня до начала мероприятия</string>
+    <string name="description_message">Описание</string>
+    <string name="reviews_message">Отзывы</string>
+    <string name="session_message">Сеансы</string>
+    <string name="place_description">Описание места</string>
+    <string name="to_write_message">Написать </string>
+    <string name="your_review_message">Ваш отзыв</string>
+    <string name="comment_message">Комментарий (необязательно)</string>
+    <string name="review_offer_message">Напишите отзыв, например: Какое чудесное место</string>
+    <string name="add_review">Добавить отзыв</string>
+    <string name="delete_review">Удалить отзыв</string>
+    <string name="distribution_message">Распределение оценок</string>
+    <string name="map">Карта</string>
 </resources>

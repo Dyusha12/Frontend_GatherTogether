@@ -30,7 +30,7 @@ class ClientProvider(private val context: Context) {
                 header(HttpHeaders.Authorization, "Bearer $token")
             }
 
-            contentType(ContentType.Application.Json)
+            //contentType(ContentType.Application.Json)
         }
     }
 

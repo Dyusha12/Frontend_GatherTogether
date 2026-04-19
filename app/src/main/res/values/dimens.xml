@@ -5,4 +5,8 @@
     <dimen name="field_name">16sp</dimen>
     <dimen name="information_text">16sp</dimen>
     <dimen name="sections_text">22sp</dimen>
+    <dimen name="header_list">20sp</dimen>
+    <dimen name="warning_message">12sp</dimen>
+    <dimen name="description_message">14sp</dimen>
+    <dimen name="header_dialog">22sp</dimen>
 </resources>

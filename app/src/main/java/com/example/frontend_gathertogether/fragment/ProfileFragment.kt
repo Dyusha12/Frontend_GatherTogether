@@ -1,5 +1,7 @@
 package com.example.frontend_gathertogether.fragment
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +10,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -19,15 +22,21 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.imageview.ShapeableImageView
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
+
 
 class ProfileFragment : Fragment(R.layout.activity_profile) {
 
@@ -46,6 +55,8 @@ class ProfileFragment : Fragment(R.layout.activity_profile) {
     private lateinit var passwordActionIcon: ImageView
     private lateinit var interestsChipGroup: ChipGroup
     private lateinit var addInterestChip: Chip
+    private lateinit var photoUser: ShapeableImageView
+    private lateinit var avatarButton: ImageView
 
     // Переменные для работы логики
     private lateinit var currentUser: User
@@ -56,6 +67,12 @@ class ProfileFragment : Fragment(R.layout.activity_profile) {
     private val selectedInterests = mutableSetOf<String>()
     private var bottomSheetDialog: BottomSheetDialog? = null
     private val currentUserInterests = mutableSetOf<String>()
+    private var hasAvatar = false
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                uploadAvatar(it)
+            }
+        }
 
     // Константы
     companion object {
@@ -83,6 +100,8 @@ class ProfileFragment : Fragment(R.layout.activity_profile) {
         passwordActionIcon = view.findViewById(R.id.icon_password_edit)
         interestsChipGroup = view.findViewById(R.id.interestsChipGroup)
         addInterestChip = view.findViewById(R.id.addInterestChip)
+        photoUser = view.findViewById(R.id.profileAvatar)
+        avatarButton = view.findViewById(R.id.btnAvatarAction)
 
         val userId = getUserId()
 
@@ -90,6 +109,7 @@ class ProfileFragment : Fragment(R.layout.activity_profile) {
         if (userId != null) {
             loadUserData(userId)
             loadAllInterests()
+            loadAvatar(userId)
             loadUserInterests(userId)
         } else {
             Log.e(TAG, "User ID not found")
@@ -128,6 +148,17 @@ class ProfileFragment : Fragment(R.layout.activity_profile) {
         addInterestChip.setOnClickListener {
             showInterestsBottomSheet()
         }
+
+        // Обработка нажатия на добавление/удаление фотографии
+        avatarButton.setOnClickListener {
+            if (userId == null) return@setOnClickListener
+            if (hasAvatar) {
+                deleteAvatar(userId)
+            } else {
+                pickImageLauncher.launch("image/*")
+            }
+        }
+
     }
 
     // Получение идентификатора пользователя
@@ -147,6 +178,57 @@ class ProfileFragment : Fragment(R.layout.activity_profile) {
 
             } catch (e: Exception) {
                 Log.e(TAG, "Ошибка загрузки пользователя", e)
+            }
+        }
+    }
+
+    // Загрузка фотографии профиля пользователя
+    private fun loadAvatar(userId: String){
+        lifecycleScope.launch {
+            try {
+                val client = ClientProvider(requireContext()).instance()
+                val response: ByteArray = client.get("$BASE_URL$userId/avatar").body()
+                if (response.isNotEmpty()) {
+                    val bitmap = BitmapFactory.decodeByteArray(response, 0, response.size)
+                    photoUser.setImageBitmap(bitmap)
+                    hasAvatar = true
+                    updateAvatarButton()
+                } else {
+                    hasAvatar = false
+                    updateAvatarButton()
+                }
+            } catch (e: Exception) {
+                hasAvatar = false
+                updateAvatarButton()
+                Log.e(TAG, "Ошибка загрузки аватарки", e)
+            }
+        }
+    }
+
+    // Изменение внешнего вида кнопки редактирования/удаления фото
+    private fun updateAvatarButton() {
+        if (hasAvatar) {
+            avatarButton.setImageResource(R.mipmap.ic_distance)
+        } else {
+            avatarButton.setImageResource(R.mipmap.ic_add)
+        }
+    }
+
+    // Удаление фотографии профиля пользователя
+    private fun deleteAvatar(userId: String) {
+        lifecycleScope.launch {
+            try {
+                val client = ClientProvider(requireContext()).instance()
+                val response = client.delete("$BASE_URL$userId/avatar")
+                if (response.status == HttpStatusCode.OK) {
+                    photoUser.setImageResource(R.mipmap.ic_launcher_round)
+                    hasAvatar = false
+                    updateAvatarButton()
+                    Toast.makeText(requireContext(), "Аватар удалён", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Ошибка удаления аватара", e)
+                Toast.makeText(requireContext(), "Ошибка удаления", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -239,6 +321,41 @@ class ProfileFragment : Fragment(R.layout.activity_profile) {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Ошибка при обновлении данных пользователя", e)
+            }
+        }
+    }
+
+    // Загрузка фотографии пользователя
+    private fun uploadAvatar(uri: Uri) {
+        val userId = getUserId() ?: return
+        lifecycleScope.launch {
+            try {
+                val client = ClientProvider(requireContext()).instance()
+
+                // Открытие потока для чтения выбранного файла
+                val inputStream = requireContext().contentResolver.openInputStream(uri)
+                    ?: throw Exception("Не удалось открыть файл")
+
+                // Чтение файла в массив байтов
+                val bytes = inputStream.readBytes()
+
+                // Отправка запроса на сервер
+                client.submitFormWithBinaryData(
+                    url = "$BASE_URL$userId/avatar",
+                    formData = formData {
+                        append("file", bytes, Headers.build {
+                            append(HttpHeaders.ContentDisposition, "filename=\"avatar.jpg\"") // Имя файла
+                            append(HttpHeaders.ContentType, "image/jpeg") // Тип файла
+                        })
+                    }
+                )
+                Toast.makeText(requireContext(), "Аватар обновлён", Toast.LENGTH_SHORT).show()
+                loadAvatar(userId)
+                hasAvatar = true
+                updateAvatarButton()
+            } catch (e: Exception) {
+                Log.e(TAG, "Ошибка загрузки аватара", e)
+                Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
             }
         }
     }

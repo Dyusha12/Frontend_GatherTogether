@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_to_profile"
             app:destination="@id/profileFragment"/>
+        <action
+            android:id="@+id/action_to_map"
+            app:destination="@id/mapFragment"/>
     </fragment>
 
     <fragment
@@ -27,5 +30,11 @@
         android:id="@+id/profileFragment"
         android:name="com.example.frontend_gathertogether.fragment.ProfileFragment"
         android:label="Profile">
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.frontend_gathertogether.fragment.MapFragment"
+        android:label="Карта">
     </fragment>
 </navigation>

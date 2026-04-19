@@ -2,7 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="launch_bg">#FE8E58</color>
+    <color name="launch_bg">#ff9a24</color>
     <color name="primaryLight">#6200EE</color>
     <color name="element_bg">#E5E5E5</color>
     <color name="gray">#797979</color>
@@ -22,4 +22,6 @@
     <color name="dark_orange_menu_gradient">#BE5505</color>
     <color name="dark_gray">#20000000</color>
     <color name="white_smoke">#F8F8F8</color>
+    <color name="alabaster_grey">#E0E0E0</color>
+    <color name="holo_red_dark">#CC0000</color>
 </resources>

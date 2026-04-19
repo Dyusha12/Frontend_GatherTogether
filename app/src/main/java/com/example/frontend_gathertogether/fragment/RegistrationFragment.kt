@@ -14,9 +14,15 @@ import com.example.frontend_gathertogether.services.ClientProvider
 import com.example.frontend_gathertogether.response.UserResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.utils.EmptyContent.contentType
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
+import io.ktor.http.contentType
+import io.ktor.http.formUrlEncode
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -269,17 +275,19 @@ class RegistrationFragment : Fragment(R.layout.activity_registration) {
             val client = clientProvider.instance()
 
             // Запрос с параметрами
-            val response: HttpResponse = client.submitForm(
-                url = REGISTER_URL,
-                formParameters = Parameters.build {
-                    append("email", email)
-                    append("phone", phone ?: "")
-                    append("password", password)
-                    append("surname", surname)
-                    append("name", name)
-                    append("birthDate", birthDate)
-                }
-            )
+            val response: HttpResponse = client.post(REGISTER_URL) {
+                contentType(ContentType.Application.FormUrlEncoded)
+                setBody(
+                    Parameters.build {
+                        append("email", email)
+                        append("phone", phone ?: "")
+                        append("password", password)
+                        append("surname", surname)
+                        append("name", name)
+                        append("birthDate", birthDate)
+                    }.formUrlEncode()
+                )
+            }
 
             // Обработка успешного ответа
             if (response.status == HttpStatusCode.OK) {

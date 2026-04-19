@@ -76,6 +76,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Иван"
+                                android:singleLine="true"
                                 android:background="@null"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -106,6 +107,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Иванов"
+                                android:singleLine="true"
                                 android:background="@null"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -144,6 +146,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="example@mail.com"
+                                android:singleLine="true"
                                 android:background="@null"/>
                         </LinearLayout>
                     </LinearLayout>

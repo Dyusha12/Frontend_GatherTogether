@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_settings -> {
                     // TODO: экран настроек
                 }
+                R.id.nav_map -> {
+                    navController.navigate(R.id.mapFragment)
+                }
             }
 
             // Закрытие меню после выбора пункта
